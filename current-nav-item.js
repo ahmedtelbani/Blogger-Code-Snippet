@@ -2,7 +2,7 @@
   You should have the same class names
 */
 
-document.addEventListener("DOMContentLoaded", function() {
+
         var currentUrl = window.location.pathname;  // after blog domain
         var navLis = document.querySelectorAll("header #Main-Nav ul li");
         navLis.forEach(function(li) {
@@ -11,4 +11,4 @@ document.addEventListener("DOMContentLoaded", function() {
                 li.classList.add("current");
             }
         });
-    });
+    

@@ -9,46 +9,40 @@ document.addEventListener("DOMContentLoaded", function() {
     if (linkList3) {
         const navHTML = document.createElement("ul");
         navHTML.id = "nav";
-
-        // Stack to keep track of nested levels
-        const parentStack = [navHTML];
+        
+        let parentStack = [navHTML]; // Keeps track of each level's parent <ul>
 
         // Iterate through each list item
         Array.from(linkList3.getElementsByTagName("li")).forEach((li) => {
             const text = li.textContent.trim();
-            const underscoreMatch = text.match(/^_+/);  // Matches leading underscores
-            const underscoreCount = underscoreMatch ? underscoreMatch[0].length : 0;
-            const content = text.slice(underscoreCount);  // Remove underscores from text
+            const underscoreCount = (text.match(/^_+/) || [""])[0].length;
+            const content = text.slice(underscoreCount);
             const href = li.querySelector("a").getAttribute("href");
 
-            // Adjust the current parent level based on underscore count
-            while (underscoreCount < parentStack.length - 1) {
-                parentStack.pop();  // Move up in hierarchy if we have too many levels
-            }
+            // Adjust parent stack for current underscore level
+            while (underscoreCount < parentStack.length - 1) parentStack.pop();
             while (underscoreCount > parentStack.length - 1) {
-                // Create a new sub-menu if needed for deeper nesting
                 const newSubMenu = document.createElement("ul");
                 newSubMenu.classList.add("sub-menu");
                 parentStack[parentStack.length - 1].lastElementChild.appendChild(newSubMenu);
                 parentStack.push(newSubMenu);
             }
 
-            // Create the new list item and append it to the current parent level
+            // Create new list item and append to current level
             const newItem = document.createElement("li");
             newItem.innerHTML = `<a href="${href}">${content}</a>`;
             parentStack[parentStack.length - 1].appendChild(newItem);
         });
 
-        // Replace the original content with the new structure
+        // Replace original content with new structure
         linkList3.innerHTML = "";
         linkList3.appendChild(navHTML);
 
-        // Add 'has-sub' class to parent links and adjust classes based on sub-menu size
+        // Apply 'has-sub' class and 'big-sub-menu' adjustment
         linkList3.querySelectorAll("ul.sub-menu").forEach((subMenu) => {
             const parentLink = subMenu.parentElement.querySelector("a");
             if (parentLink) parentLink.classList.add("has-sub");
 
-            // Change class to 'big-sub-menu' if sub-menu has more than 5 items
             if (subMenu.children.length > 5) {
                 subMenu.classList.replace("sub-menu", "big-sub-menu");
             }

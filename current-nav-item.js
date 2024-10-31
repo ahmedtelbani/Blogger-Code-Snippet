@@ -1,8 +1,8 @@
 /*
-  You should have the same class names
+* You should have the same class names
+* It make sure that "current" class is added to the clicked item in Nav menu
 */
-
-
+document.addEventListener("DOMContentLoaded", function() {
         var currentUrl = window.location.pathname;  // after blog domain
         var navLis = document.querySelectorAll("header #Main-Nav ul li");
         navLis.forEach(function(li) {
@@ -11,4 +11,4 @@
                 li.classList.add("current");
             }
         });
-    
+    });

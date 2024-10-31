@@ -2,13 +2,13 @@
 * add (_) before li item name to convert it to a sub-item into ul with sub-menu class
 * if the number of sub-items is more than 5, it will be in big-sub-menu class
 */
+
 document.addEventListener("DOMContentLoaded", function() {
     const linkList3 = document.getElementById("LinkList3");
 
     if (linkList3) {
         const navHTML = document.createElement("ul");
         navHTML.id = "nav";
-        let currentParent = navHTML;
 
         // Stack to keep track of nested levels
         const parentStack = [navHTML];
@@ -16,13 +16,17 @@ document.addEventListener("DOMContentLoaded", function() {
         // Iterate through each list item
         Array.from(linkList3.getElementsByTagName("li")).forEach((li) => {
             const text = li.textContent.trim();
-            const underscoreCount = text.match(/^_+/)?.[0].length || 0;
-            const content = text.slice(underscoreCount);
+            const underscoreMatch = text.match(/^_+/);  // Matches leading underscores
+            const underscoreCount = underscoreMatch ? underscoreMatch[0].length : 0;
+            const content = text.slice(underscoreCount);  // Remove underscores from text
             const href = li.querySelector("a").getAttribute("href");
 
             // Adjust the current parent level based on underscore count
-            while (underscoreCount < parentStack.length - 1) parentStack.pop();
+            while (underscoreCount < parentStack.length - 1) {
+                parentStack.pop();  // Move up in hierarchy if we have too many levels
+            }
             while (underscoreCount > parentStack.length - 1) {
+                // Create a new sub-menu if needed for deeper nesting
                 const newSubMenu = document.createElement("ul");
                 newSubMenu.classList.add("sub-menu");
                 parentStack[parentStack.length - 1].lastElementChild.appendChild(newSubMenu);
@@ -51,4 +55,3 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
-

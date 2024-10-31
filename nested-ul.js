@@ -6,36 +6,40 @@ document.addEventListener("DOMContentLoaded", function() {
     const linkList3 = document.getElementById("LinkList3");
 
     if (linkList3) {
-        let navHTML = "<ul id='nav'><li><ul class='sub-menu'>";
+        const navHTML = document.createElement("ul");
+        navHTML.id = "nav";
+        let currentParent = navHTML;
+
+        // Stack to keep track of nested levels
+        const parentStack = [navHTML];
 
         // Iterate through each list item
         Array.from(linkList3.getElementsByTagName("li")).forEach((li) => {
             const text = li.textContent.trim();
-            const prefix = text.charAt(0);
-            const content = text.slice(1);
+            const underscoreCount = text.match(/^_+/)?.[0].length || 0;
+            const content = text.slice(underscoreCount);
             const href = li.querySelector("a").getAttribute("href");
 
-            if (prefix === "_") {
-                // Add to sub-menu
-                navHTML += `<li><a href="${href}">${content}</a></li>`;
-            } else {
-                // Close previous sub-menu and open a new one
-                navHTML += `</ul></li><li><a href="${href}">${text}</a><ul class='sub-menu'>`;
+            // Adjust the current parent level based on underscore count
+            while (underscoreCount < parentStack.length - 1) parentStack.pop();
+            while (underscoreCount > parentStack.length - 1) {
+                const newSubMenu = document.createElement("ul");
+                newSubMenu.classList.add("sub-menu");
+                parentStack[parentStack.length - 1].lastElementChild.appendChild(newSubMenu);
+                parentStack.push(newSubMenu);
             }
+
+            // Create the new list item and append it to the current parent level
+            const newItem = document.createElement("li");
+            newItem.innerHTML = `<a href="${href}">${content}</a>`;
+            parentStack[parentStack.length - 1].appendChild(newItem);
         });
 
-        navHTML += "</ul></li></ul>";
-        linkList3.innerHTML = navHTML;
+        // Replace the original content with the new structure
+        linkList3.innerHTML = "";
+        linkList3.appendChild(navHTML);
 
-        // Remove empty sub-menus and items
-        linkList3.querySelectorAll("ul").forEach((ul) => {
-            if (ul.textContent.trim() === "") ul.remove();
-        });
-        linkList3.querySelectorAll("li").forEach((li) => {
-            if (li.textContent.trim() === "") li.remove();
-        });
-
-        // Add 'has-sub' class to parent links
+        // Add 'has-sub' class to parent links and adjust classes based on sub-menu size
         linkList3.querySelectorAll("ul.sub-menu").forEach((subMenu) => {
             const parentLink = subMenu.parentElement.querySelector("a");
             if (parentLink) parentLink.classList.add("has-sub");
@@ -47,3 +51,4 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+

@@ -1,5 +1,6 @@
 /*
-
+* add (_) before li item name to convert it to a sub-item into ul with sub-menu class
+* if the number of sub-items is more than 5, it will be in big-sub-menu class
 */
 document.addEventListener("DOMContentLoaded", function() {
     var linkList = document.getElementById("LinkList3");
@@ -41,6 +42,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 subMenu.remove();
             }
         }
+
+        // Check sub-menu lengths and update classes
+        var allSubMenus = linkList.querySelectorAll("ul#sub-menu");
+        allSubMenus.forEach(function(subMenu) {
+            var itemsInSubMenu = subMenu.getElementsByTagName("li");
+            if (itemsInSubMenu.length > 5) {
+                subMenu.id = 'big-sub-menu'; // Change the sub-menu ID to big-sub-menu
+                subMenu.classList.add('big-sub-menu'); // Add the big-sub-menu class
+            }
+        });
 
         // Remove empty list items
         var listItems = linkList.getElementsByTagName("li");
